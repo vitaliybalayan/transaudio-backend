@@ -60,4 +60,14 @@ export class MinioService implements OnModuleInit {
         }
     }
 
+    async uploadFile(key: string, file: Buffer) {
+        const { PutObjectCommand } = await import('@aws-sdk/client-s3')
+        await this.s3Client.send(new PutObjectCommand({
+            Bucket: this.BUCKET_NAME,
+            Key: key,
+            Body: file
+        }))
+
+        return `${this.BUCKET_NAME}/${key}`
+    }
 }
