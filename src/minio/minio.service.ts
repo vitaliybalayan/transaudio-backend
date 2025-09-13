@@ -1,4 +1,5 @@
-import { CreateBucketCommand, PutBucketPolicyCommand, S3Client } from '@aws-sdk/client-s3';
+import { CreateBucketCommand, GetObjectCommand, PutBucketPolicyCommand, S3Client } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
@@ -8,8 +9,6 @@ export class MinioService implements OnModuleInit {
     private readonly s3Client: S3Client;
     private readonly logger = new Logger(MinioService.name)
     private readonly BUCKET_NAME: string = ""
-    
-    
 
     constructor(private configService: ConfigService) {
         this.s3Client = new S3Client({
@@ -69,5 +68,13 @@ export class MinioService implements OnModuleInit {
         }))
 
         return `${this.BUCKET_NAME}/${key}`
+    }
+
+    async getPresignedUrl(key: string): Promise<string> {
+        return getSignedUrl(this.s3Client, new GetObjectCommand({
+            Bucket: this.BUCKET_NAME,
+            Key: key,
+            // todo: вынести expiresIn в .env 
+        }), { expiresIn: 3600 })
     }
 }

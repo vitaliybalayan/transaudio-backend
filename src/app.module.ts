@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MinioModule } from './minio/minio.module';
+import { GraphQLModule } from '@nestjs/graphql';
+import { getGraphQLConfig } from './config/graphql.config';
+import { ApolloDriver } from '@nestjs/apollo';
+import { JobModule } from './job/job.module';
 
 @Module({
 	imports: [
@@ -11,9 +13,14 @@ import { MinioModule } from './minio/minio.module';
 			isGlobal: true,
 		}),
 		PrismaModule,
+		GraphQLModule.forRootAsync({
+			driver: ApolloDriver,
+			useFactory: getGraphQLConfig,
+			inject: [ConfigService],
+			imports: [ConfigModule]
+		}),
 		MinioModule,
+		JobModule,
 	],
-	controllers: [AppController],
-	providers: [AppService],
 })
 export class AppModule {}
