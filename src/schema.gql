@@ -11,6 +11,7 @@ type JobModel {
   createdAt: DateTime!
   filename: String!
   id: ID!
+  presignedUrl: String
   status: JobStatus!
   transcriptionText: String
   updatedAt: DateTime!

@@ -19,6 +19,9 @@ export class JobModel implements Job {
     @Field(() => String, { nullable: true })
     public transcriptionText: string
 
+    @Field(() => String, { nullable: true })
+    public presignedUrl: string
+
     @Field(() => Date)
 	public createdAt: Date
 
