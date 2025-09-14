@@ -11,10 +11,13 @@ datasource db {
 model Job {
   id String @id @default(uuid())
   status JobStatus @default(CREATED)
+  
+  filename String?
+
+  transcriptionText String? @map("transcription_text")
 
   createdAt DateTime @default(now()) @map("created_at")
-  updateAt DateTime @updatedAt @map("updated_at")
-
+  updatedAt DateTime @updatedAt @map("updated_at")
   @@map("jobs")
 }
 
