@@ -9,6 +9,7 @@ export class MinioService implements OnModuleInit {
     private readonly s3Client: S3Client;
     private readonly logger = new Logger(MinioService.name)
     private readonly BUCKET_NAME: string = ""
+    private readonly PRESIGNED_EXPIRES: number = 0
 
     constructor(private configService: ConfigService) {
         this.s3Client = new S3Client({
@@ -22,6 +23,7 @@ export class MinioService implements OnModuleInit {
         })
 
         this.BUCKET_NAME = this.configService.get<string>("MINIO_BUCKET") || 'audio'
+        this.PRESIGNED_EXPIRES = parseInt(this.configService.get<string>("PRESIGNED_EXPIRES") || "0") || 3600
     }
 
     async onModuleInit() {
@@ -80,7 +82,6 @@ export class MinioService implements OnModuleInit {
         return getSignedUrl(this.s3Client, new GetObjectCommand({
             Bucket: this.BUCKET_NAME,
             Key: key,
-            // todo: вынести expiresIn в .env 
-        }), { expiresIn: 3600 })
+        }), { expiresIn: this.PRESIGNED_EXPIRES })
     }
 }
