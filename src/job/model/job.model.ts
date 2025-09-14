@@ -16,6 +16,9 @@ export class JobModel implements Job {
     @Field(() => String)
     public filename: string
 
+    @Field(() => String, { nullable: true })
+    public transcriptionText: string
+
     @Field(() => Date)
 	public createdAt: Date
 

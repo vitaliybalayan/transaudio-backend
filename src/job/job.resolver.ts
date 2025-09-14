@@ -15,11 +15,12 @@ export class JobResolver {
 		return this.jobService.getAll();
 	}
 
-	@Mutation(() => JobModel)
+	@Mutation(() => String)
 	async createTranscriptionJob(
 		@Args('audio', { type: () => GraphQLUpload }, FileValidationPipe)
 		audio: Upload
 	) {
+		await new Promise(r => setTimeout(r, 2000));
 		return this.jobService.createJob(audio)
 	}
 

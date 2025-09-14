@@ -12,6 +12,7 @@ type JobModel {
   filename: String!
   id: ID!
   status: JobStatus!
+  transcriptionText: String
   updatedAt: DateTime!
 }
 
@@ -22,7 +23,7 @@ enum JobStatus {
 }
 
 type Mutation {
-  createTranscriptionJob(audio: Upload!): JobModel!
+  createTranscriptionJob(audio: Upload!): String!
 }
 
 type Query {

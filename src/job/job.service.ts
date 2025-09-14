@@ -10,27 +10,37 @@ export class JobService {
 		private readonly minioService: MinioService,
 	) {}
 
-    async getAll() {
-        const jobs = await this.prismaService.job.findMany()
-        return jobs
-    }
+	async getAll() {
+		const jobs = await this.prismaService.job.findMany({ orderBy: {updatedAt: 'desc'} });
+		return jobs;
+	}
 
 	async createJob(file: Upload) {
-        
-        if (!file.file) throw new BadRequestException('Файл не найден по какой-то причине.')
+        let upload;
+		try {
+            upload = await file;
+		} catch (error) {
+			console.error('File resolution error:', error);
+			throw new BadRequestException(`Ошибка обработки файла: ${error.message}`);
+		}
 
-        const { createReadStream, filename } = file.file;
+		const { createReadStream, filename, mimetype } = upload;
 
-        const stream = createReadStream();
-        const chunks: Buffer[] = [];
-        for await (const chunk of stream) {
-            chunks.push(chunk);
-        }
-        const buffer = Buffer.concat(chunks);
+		const stream = createReadStream();
+		const chunks: Buffer[] = [];
+		for await (const chunk of stream) {
+			chunks.push(chunk);
+		}
+		const buffer = Buffer.concat(chunks);
 
-        // Генерация уникального имени файла
-        const uniqueFilename = `${Date.now()}-${filename}`;
+		const uniqueFilename = `${Date.now()}-${filename}`;
 
-        return this.minioService.uploadFile(uniqueFilename, buffer);
+		await this.prismaService.job.create({
+			data: {
+				filename: uniqueFilename
+			}
+		})
+
+		return this.minioService.uploadFile(uniqueFilename, buffer, mimetype);
 	}
 }

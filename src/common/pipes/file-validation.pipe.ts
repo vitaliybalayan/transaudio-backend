@@ -11,7 +11,7 @@ export class FileValidationPipe implements PipeTransform {
         const { filename, createReadStream } = value
         const fileStream = createReadStream() as ReadStream
 
-        const allowedFormats = ['mp3', 'wav', 'pcm', 'ogg'];
+        const allowedFormats = ['mp3', 'wav', 'pcm', 'ogg', 'm4a'];
         const isFileFormatValid = validateFileFormat(filename, allowedFormats)
 
         if (!isFileFormatValid) {
