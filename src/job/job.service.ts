@@ -35,12 +35,15 @@ export class JobService {
 
 		const uniqueFilename = `${Date.now()}-${filename}`;
 
+		const url = await this.minioService.uploadFile(uniqueFilename, buffer, mimetype);
+
 		await this.prismaService.job.create({
 			data: {
-				filename: uniqueFilename
+				filename: uniqueFilename,
+				presignedUrl: url
 			}
 		})
 
-		return this.minioService.uploadFile(uniqueFilename, buffer, mimetype);
+		return url;
 	}
 }
