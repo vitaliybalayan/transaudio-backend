@@ -6,12 +6,15 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { getGraphQLConfig } from './config/graphql.config';
 import { ApolloDriver } from '@nestjs/apollo';
 import { JobModule } from './job/job.module';
+import { TranscriptionModule } from './transcription/transcription.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
 	imports: [
 		ConfigModule.forRoot({
 			isGlobal: true,
 		}),
+		ScheduleModule.forRoot(),
 		PrismaModule,
 		GraphQLModule.forRootAsync({
 			driver: ApolloDriver,
@@ -21,6 +24,7 @@ import { JobModule } from './job/job.module';
 		}),
 		MinioModule,
 		JobModule,
+		TranscriptionModule,
 	],
 })
 export class AppModule {}
